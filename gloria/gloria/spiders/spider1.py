@@ -1,26 +1,34 @@
 import scrapy
+import csv
 
 
 class KeywordSpider(scrapy.Spider):
-    name = "spider1"
+    name = 'spider1'
 
     start_urls = [
         'https://concepto.de/que-es-la-filosofia/',
-        'https://www.anipedia.net/perros/,'
-        'https://uptecamac.edomex.gob.mx/',
+        'https://www.anipedia.net/perros/',
+        'https://www.ecologiaverde.com/que-son-los-vegetales-3177.html',
     ]
+
+    # La palabra que estamos buscando
+    palabra = 'modo'
 
     def parse(self, response):
 
-        keyword = 'Alumnos'
+        texto = response.text.lower()
 
-        if keyword in response.text:
+        ocurrencias = texto.count(self.palabra.lower())
+
+        if ocurrencias > 0:
             yield {
                 'url': response.url,
-                'keyword_found': True,
+                'ocurrencias': ocurrencias
             }
-        else:
-            yield {
-                'url': response.url,
-                'keyword_found': False,
-            }
+# Configuración para guardar en CSV
+FEEDS = {
+    'resultados.csv': {
+        'format': 'csv',
+        'overwrite': True,
+    },
+}
